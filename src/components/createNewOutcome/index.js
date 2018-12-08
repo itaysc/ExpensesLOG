@@ -59,7 +59,7 @@ const Outcome = t.struct({
         }
       }
     }
-
+ 
     onSave = ()=>{
       let errors = this.getValidationErrors();
       if(errors.length > 0){
