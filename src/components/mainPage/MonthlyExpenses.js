@@ -12,6 +12,7 @@ import moment from 'moment';
 import Icon from "react-native-vector-icons/Ionicons";
 import {generateMonthlyReportCSVAndSend, saveMonthlyReportCSV} from '../../utils/CSVReports';
 import Swipeable from 'react-native-swipeable';
+import Toast, {DURATION} from 'react-native-easy-toast';
 
  class MonthlyExpenses extends Component {
     constructor(props){
@@ -23,6 +24,12 @@ import Swipeable from 'react-native-swipeable';
 
     componentDidMount(){
       this.props.getOutcomesByMonth(this.props.month);
+    }
+
+    componentWillReceiveProps(nextProps){
+        if(this.props.outcomes !== nextProps.outcomes){
+            nextProps.getOutcomesByMonth(nextProps.month);
+        }
     }
 
     toggleContent=(index)=>{
@@ -51,9 +58,15 @@ import Swipeable from 'react-native-swipeable';
         this.props.getOutcomesByMonth(this.props.month);
     }
 
-    onLeftActionRelease(outcomeIndex){
-        Alert.alert("Notification", "Delete Outcome?", [
-            {text: 'Delete', onPress: () => this.props.deleteOutcome(outcomeIndex, this.refreshData)},
+    deleteCallBack = ()=>{
+        this.props.getOutcomesByMonth(this.props.month);
+        this.toast.show('Deleted Successfully!', 500);
+    }
+
+    onLeftActionRelease(outcomeIndex, outcome){
+        Alert.alert("Select Action", "", [
+            {text: 'Delete', onPress: () => this.props.deleteOutcome(outcomeIndex, this.deleteCallBack)},
+            {text: 'Change', onPress: () => Actions.updateOutcome({outcome})},
             {text: 'Cancel', style: 'cancel', onPress: () => false},
         ])
     }
@@ -76,6 +89,7 @@ import Swipeable from 'react-native-swipeable';
       }
     return (
      <ScrollView >
+         <Toast ref={el=>this.toast = el} style={styles.toast}/>
          <View style={{flexDirection: "row"}}>
             <Icon.Button 
                 backgroundColor="transparent"
@@ -100,7 +114,7 @@ import Swipeable from 'react-native-swipeable';
                let isCollapsed = !this.isShowContent(index);
                return (
                 <Swipeable leftButtons={leftButtons} key={index + o.Description} 
-                    onLeftActionRelease={this.onLeftActionRelease.bind(this, o.index)}>
+                    onLeftActionRelease={this.onLeftActionRelease.bind(this, o.index, o)}>
                     <View  key={index + o.Description} style={styles.mainContainer}>
                             <TouchableBtn 
                                 text={`${o.Amount}${this.props.settings.symbol} (${moment(o.Date).format(this.props.settings.dateFormat)})`} 
@@ -116,6 +130,7 @@ import Swipeable from 'react-native-swipeable';
                                 </View>
                             </Collapsible>
                     </View>
+                    
                 </Swipeable>
                )
            })
@@ -146,6 +161,9 @@ const styles = StyleSheet.create({
     noDataText:{
         alignItems:'center',
         margin: 35
+    },
+    toast:{
+        backgroundColor: "#33ff33"
     }
 });
 

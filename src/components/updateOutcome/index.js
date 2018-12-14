@@ -1,13 +1,15 @@
 
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, ScrollView, Alert } from 'react-native'
 import {Actions} from 'react-native-router-flux';
 import moment from 'moment';
 import t from 'tcomb-form-native';
 import TouchableBtn from '../UI/TouchableBtn';
-import {saveOutcome} from '../../actions/outcomes';
+import {updateOutcome} from '../../actions/outcomes';
+import Toast, {DURATION} from 'react-native-easy-toast';
 
 const formatFunction = format => date => formatDate(format, date)
 
@@ -46,21 +48,53 @@ const Outcome = t.struct({
   NumberOfPayments: t.Number 
 });
 
- class CreateNewOutcome extends Component {
+ class UpdateOutcome extends Component {
     constructor(props){
         super(props);
       this.state={
         value:{
-          Category: this.props.categoryName,
-          Date: new Date(),
-          Amount: 0,
-          Description:"",
-          PaymentMethod: 'Cash',
-          NumberOfPayments:1
+          Category: this.props.outcome.Category,
+          Date: new Date(this.props.outcome.Date),
+          Amount: this.props.outcome.Amount,
+          Description: this.props.outcome.Description,
+          PaymentMethod: this.props.outcome.PaymentMethod,
+          NumberOfPayments: this.props.outcome.NumberOfPayments
         }
       }
     }
- 
+    
+    static propTypes = {
+        outcome: PropTypes.shape({
+            id: PropTypes.string,
+            Category: PropTypes.string,
+            Date: PropTypes.oneOfType([
+                PropTypes.instanceOf(Date),
+                PropTypes.string
+            ]),
+            Amount: PropTypes.oneOfType([
+                PropTypes.number,
+                PropTypes.string
+            ]),
+            Description: PropTypes.string,
+            PaymentMethod: PropTypes.string,
+            NumberOfPayments: PropTypes.oneOfType([
+                PropTypes.number,
+                PropTypes.string
+            ])
+        }).isRequired
+    }
+
+    // static defaultProps = {
+    //     outcome:{
+    //         Category: "None",
+    //         Date: new Date(),
+    //         Amount: 0,
+    //         Description: "",
+    //         PaymentMethod: "Cash",
+    //         NumberOfPayments: 1
+    //     }
+    // }
+
     onSave = ()=>{
       let errors = this.getValidationErrors();
       if(errors.length > 0){
@@ -70,8 +104,14 @@ const Outcome = t.struct({
         value.NumberOfPayments = 1;
         this.setState({value});
       }else{
-        this.props.saveOutcome(this.state.value, ()=>Actions.dashboard());
+        this.props.updateOutcome(this.props.outcome.id, this.state.value, this.updateCallback);
       }
+    }
+
+    updateCallback = (outcomes)=>{
+        this.toast.show('Saved Successfully!', 500, () => {
+            Actions.dashboard();
+        });
     }
 
     getValidationErrors = ()=>{
@@ -92,7 +132,8 @@ const Outcome = t.struct({
       <ScrollView >
           <View style={styles.container}>
               <Form type={Outcome} options={options} value={this.state.value} onChange={this.onChange}/>
-              <TouchableBtn text="Save" onPress={this.onSave}/>
+              <TouchableBtn text="Save Changes" onPress={this.onSave}/>
+              <Toast ref={el=>this.toast = el} style={styles.toast}/>
           </View>
       </ScrollView>
     );
@@ -106,20 +147,24 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#ffffff',
   },
+  toast:{
+      backgroundColor: "#33ff33"
+  }
 });
 
 function mapStateToProps(state){
   return({
-    settings: state.settings
+    settings: state.settings,
+    categories: state.categories
   })
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    saveOutcome,
+    updateOutcome,
   }, dispatch);
 }
 
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateNewOutcome);
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateOutcome);

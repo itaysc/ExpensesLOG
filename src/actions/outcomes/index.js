@@ -1,20 +1,45 @@
 import { AsyncStorage } from "react-native";
 import types from './types';
 import moment from 'moment';
+import uuidv1  from 'uuid/v1';// v1 is using timestamp
 
-export const deleteOutcome = (outcomeIndex, callback=null)=> async(dispatch)=>{
+export const deleteOutcome = (id, callback=null)=> async(dispatch)=>{
     try {
         let outcomes = await AsyncStorage.getItem("outcomes")
         outcomes = JSON.parse(outcomes);
         if(!outcomes){
             return;
         }
-        outcomes = outcomes.filter(o=>o.index!= outcomeIndex);
+        outcomes = outcomes.filter(o=>o.id!= id);
         await AsyncStorage.setItem('outcomes', JSON.stringify(outcomes));
         if(callback){
             callback(outcomes);
         }
         return dispatch({type: types.DELETE_OUTCOME, payload: outcomes});
+      } catch (error) {
+        // Error saving data
+      }
+}
+
+export const updateOutcome = (id, newValue, callback=null)=> async(dispatch)=>{
+    try {
+        let outcomes = await AsyncStorage.getItem("outcomes")
+        outcomes = JSON.parse(outcomes);
+        if(!outcomes){
+            return;
+        }
+        if(outcomes.filter(outc=>outc.id == id).length > 0 ){
+            outcomes = outcomes.filter(o=>o.id!= id);
+            newValue.id = id;
+            outcomes.push(newValue);
+            await AsyncStorage.setItem('outcomes', JSON.stringify(outcomes));
+            if(callback){
+                callback(outcomes);
+            }
+            return dispatch({type: types.UPDATE_OUTCOME, payload: outcomes});
+        }
+
+
       } catch (error) {
         // Error saving data
       }
@@ -27,7 +52,7 @@ export const saveOutcome = (value, callback=null)=> async(dispatch)=>{
         if(!outcomes){
             outcomes = [];
         }
-        value.index = outcomes.length;
+        value.id = uuidv1();
         outcomes.push(value);
         await AsyncStorage.setItem('outcomes', JSON.stringify(outcomes));
         dispatch({type: types.SAVE_OUTCOME, payload: outcomes});

@@ -8,7 +8,7 @@ import SelectCategory from './src/components/createNewOutcome/SelectCategory';
 import AddCategory from './src/components/createNewOutcome/AddCategory';
 import CheckUserExistance from './src/components/checkUserExistance';
 import MonthlyExpenses from './src/components/mainPage/MonthlyExpenses';
-
+import UpdatewOutcome from './src/components/updateOutcome';
 
 export default class RouterComponent extends Component{
     constructor(props){
@@ -44,6 +44,9 @@ export default class RouterComponent extends Component{
                         <Scene key={"createNewOutcome"}
                                component={CreateNewOutcome}
                                title={"New Outcome"}/>
+                         <Scene key={"updateOutcome"}
+                               component={UpdatewOutcome}
+                               title={"Update Outcome"}/>
                         <Scene key={"monthlyExpenses"}
                                component={MonthlyExpenses}
                                title={"Monthly Expenses"}/>

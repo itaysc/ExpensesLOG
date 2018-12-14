@@ -22,7 +22,7 @@ import {getSettings} from '../../actions/settings';
     }
 
     componentDidMount(){
-      this.props.getSettings();
+      //this.props.getSettings();
       this.props.getOutcomesByMonth(new Date());
      
       //this.generateCSV();
@@ -30,18 +30,22 @@ import {getSettings} from '../../actions/settings';
 
 
     componentWillReceiveProps(nextProps){
-      if(this.props.outcomes.byMonth !== nextProps.outcomes.byMonth){
-       // console.log(this.getMonthTotalExpenses())
-       // requestStoragePermission(this.generateMonthlyReportCSV);
-        this.setState({monthTotalExpenses: this.getMonthTotalExpenses()})
+      if(this.props.outcomes !== nextProps.outcomes){
+        this.setState({monthTotalExpenses: this.getMonthTotalExpenses(nextProps)})
       }
     }
 
-    getMonthTotalExpenses = ()=>{
+    getMonthTotalExpenses = (props=null)=>{
       let res = 0;
-      this.props.outcomes.byMonth.map(o=>{
-        res += parseFloat(o.Amount);
-      })
+      if(props){
+        props.outcomes.byMonth.map(o=>{
+          res += parseFloat(o.Amount);
+        })
+      }else{
+        this.props.outcomes.byMonth.map(o=>{
+          res += parseFloat(o.Amount);
+        })
+      }
       return res;
     }
 
@@ -71,13 +75,10 @@ import {getSettings} from '../../actions/settings';
               </Icon.Button >
               
        </View>
-       {/* <View>
-         <TouchableBtn text="Watch Monthly Expenses" onPress={this.goToMonthlyExpensesPage}/>
-       </View> */}
-       {
+       {/* {
          monthlyGraphData.length > 0 &&
          <MonthlyGraphByDays expenses={monthlyGraphData}/>
-       }
+       } */}
        {
          monthlyByCategoryGraphData.length > 0 &&
          <MonthlyByCategory data={monthlyByCategoryGraphData} currency={this.props.settings.symbol}/>
