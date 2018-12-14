@@ -23,13 +23,10 @@ import Toast, {DURATION} from 'react-native-easy-toast';
     }
 
     componentDidMount(){
-      this.props.getOutcomesByMonth(this.props.month);
     }
 
     componentWillReceiveProps(nextProps){
-        if(this.props.outcomes !== nextProps.outcomes){
-            nextProps.getOutcomesByMonth(nextProps.month);
-        }
+
     }
 
     toggleContent=(index)=>{
@@ -114,7 +111,7 @@ import Toast, {DURATION} from 'react-native-easy-toast';
                let isCollapsed = !this.isShowContent(index);
                return (
                 <Swipeable leftButtons={leftButtons} key={index + o.Description} 
-                    onLeftActionRelease={this.onLeftActionRelease.bind(this, o.index, o)}>
+                    onLeftActionRelease={this.onLeftActionRelease.bind(this, o.id, o)}>
                     <View  key={index + o.Description} style={styles.mainContainer}>
                             <TouchableBtn 
                                 text={`${o.Amount}${this.props.settings.symbol} (${moment(o.Date).format(this.props.settings.dateFormat)})`} 

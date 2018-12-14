@@ -24,7 +24,6 @@ import { PieChart } from 'react-native-svg-charts';
         expenses: []
     }
     render() {
-    
         const Labels = (gd) => {
             return gd.slices.map((slice, index) => {
                 const { labelCentroid, pieCentroid, data } = slice;
@@ -69,7 +68,6 @@ import { PieChart } from 'react-native-svg-charts';
         //         )
         //     })
         // }
-
         return (
             <View>
                   <View style={{alignItems:'center', marginTop:15}}>

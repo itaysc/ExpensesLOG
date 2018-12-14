@@ -5,9 +5,9 @@ import moment from 'moment';
 
 export default (state = {all:[], byMonth: [], byRange:[]}, action) =>{
     switch(action.type){
-        case types.SAVE_OUTCOME: return {...state, all: action.payload};
-        case types.GET_OUTCOMES_BY_MONTH: return {...state, byMonth: action.payload.sort(compare)};
-        case types.GET_OUTCOMES_BY_RANGE: return {...state, byRange: action.payload.sort(compare)};
+        case types.SAVE_OUTCOME: console.log("SAVE_OUTCOME"); return {...state, all: action.payload};
+        case types.GET_OUTCOMES_BY_MONTH:console.log("GET_OUTCOMES_BY_MONTH"); return {...state, byMonth: action.payload.sort(compare)};
+        case types.GET_OUTCOMES_BY_RANGE:console.log("GET_OUTCOMES_BY_RANGE"); return {...state, byRange: action.payload.sort(compare)};
     }
     
     return state;

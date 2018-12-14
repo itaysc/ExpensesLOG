@@ -5,6 +5,7 @@ import uuidv1  from 'uuid/v1';// v1 is using timestamp
 
 export const deleteOutcome = (id, callback=null)=> async(dispatch)=>{
     try {
+        
         let outcomes = await AsyncStorage.getItem("outcomes")
         outcomes = JSON.parse(outcomes);
         if(!outcomes){

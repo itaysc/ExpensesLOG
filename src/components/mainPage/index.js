@@ -30,9 +30,9 @@ import {getSettings} from '../../actions/settings';
 
 
     componentWillReceiveProps(nextProps){
-      if(this.props.outcomes !== nextProps.outcomes){
-        this.setState({monthTotalExpenses: this.getMonthTotalExpenses(nextProps)})
-      }
+     if(this.props.outcomes !== nextProps.outcomes){
+       this.setState({monthTotalExpenses: this.getMonthTotalExpenses(nextProps)})
+     }
     }
 
     getMonthTotalExpenses = (props=null)=>{
@@ -56,6 +56,7 @@ import {getSettings} from '../../actions/settings';
   
 
   render(){
+
     let monthlyGraphData = getMonthlyByDayGraphData(this.props.outcomes.byMonth, this.props.settings.dateFormat);
     let monthlyByCategoryGraphData = getMonthlyByCategoryGraphData(this.props.outcomes.byMonth);
     return (
